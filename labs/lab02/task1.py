@@ -13,7 +13,9 @@ from datetime import (  # Імпортуємо класи для роботи з
 
 # Константи за вимогами методички
 PBKDF2_ITERATIONS = 100_000  # Кількість ітерацій для алгоритму хешування (чим більше, тим складніше зламати)
-SESSION_TIMEOUT_SEC = 900  # Максимальний час бездіяльності користувача у секундах (15 хвилин)
+SESSION_TIMEOUT_SEC = (
+    900  # Максимальний час бездіяльності користувача у секундах (15 хвилин)
+)
 
 
 # --- ПУНКТ 2: Клас User ---
@@ -25,12 +27,18 @@ class User:
         r"^[a-zA-Z][a-zA-Z0-9_]{2,63}@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
     )
 
-    def __init__(self, username: str, email: str, role: str = "user", active: bool = True):
+    def __init__(
+        self, username: str, email: str, role: str = "user", active: bool = True
+    ):
         self.username = username  # Зберігаємо ім'я користувача
         self.role = role  # Зберігаємо роль (за замовчуванням "user")
         self.active = active  # Статус акаунту (True - активний, False - заблокований)
-        self.__password_hash: bytes | None = None  # Приватна змінна для збереження хешу пароля (спочатку порожня)
-        self.__password_salt: bytes | None = None  # Приватна змінна для збереження "солі" пароля
+        self.__password_hash: bytes | None = (
+            None  # Приватна змінна для збереження хешу пароля (спочатку порожня)
+        )
+        self.__password_salt: bytes | None = (
+            None  # Приватна змінна для збереження "солі" пароля
+        )
         self.email = email  # Встановлюємо email (це автоматично викличе перевірку в @email.setter)
 
     @property
@@ -41,7 +49,9 @@ class User:
     @email.setter
     def email(self, value: str) -> None:
         # Сеттер для перевірки email перед його збереженням
-        if not self.EMAIL_REGEX.match(value):  # Якщо email не відповідає регулярному виразу
+        if not self.EMAIL_REGEX.match(
+            value
+        ):  # Якщо email не відповідає регулярному виразу
             raise ValueError(  # Викликаємо помилку з детальним описом
                 f"Некоректний формат email: '{value}'. "
                 "Локальна частина має починатися з літери і містити від 3 до 64 символів."
@@ -52,7 +62,9 @@ class User:
         # Метод для встановлення та шифрування нового пароля
         if not password:
             raise ValueError("Пароль не може бути порожнім.")
-        self.__password_salt = os.urandom(16)  # Генеруємо 16 випадкових байтів ("сіль" ускладнює злам)
+        self.__password_salt = os.urandom(
+            16
+        )  # Генеруємо 16 випадкових байтів ("сіль" ускладнює злам)
         self.__password_hash = hashlib.pbkdf2_hmac(  # Створюємо надійний хеш пароля
             "sha256",  # Використовуємо алгоритм SHA-256
             password.encode("utf-8"),  # Перетворюємо пароль у байти
@@ -64,11 +76,13 @@ class User:
         # Метод для перевірки правильності введеного пароля під час входу
         if not self.__password_hash or not self.__password_salt:
             return False  # Якщо пароль ще не встановлено, повертаємо False
-        computed_hash = hashlib.pbkdf2_hmac(  # Хешуємо введений пароль з тією ж самою сіллю
-            "sha256",
-            password.encode("utf-8"),
-            self.__password_salt,
-            PBKDF2_ITERATIONS,
+        computed_hash = (
+            hashlib.pbkdf2_hmac(  # Хешуємо введений пароль з тією ж самою сіллю
+                "sha256",
+                password.encode("utf-8"),
+                self.__password_salt,
+                PBKDF2_ITERATIONS,
+            )
         )
         # Безпечно порівнюємо збережений хеш і щойно згенерований хеш
         return hmac.compare_digest(self.__password_hash, computed_hash)
@@ -95,9 +109,13 @@ class Admin(User):  # Успадковуємо всі властивості т�
         # Викликаємо конструктор батьківського класу User і жорстко задаємо роль "admin"
         super().__init__(username=username, email=email, role="admin", active=active)
         if permissions is None:
-            self.permissions: set[str] = set()  # Якщо права не передані, створюємо порожню множину (set)
+            self.permissions: set[str] = (
+                set()
+            )  # Якщо права не передані, створюємо порожню множину (set)
         else:
-            self.permissions = set(permissions)  # Перетворюємо передані права у множину для уникнення дублікатів
+            self.permissions = set(
+                permissions
+            )  # Перетворюємо передані права у множину для уникнення дублікатів
 
     def grant_permission(self, permission: str) -> None:
         # Додаємо нове право адміністратору
@@ -124,7 +142,9 @@ class Session:
         self.ip = ip  # Зберігаємо IP-адресу, з якої зайшов користувач
         now = datetime.now(timezone.utc)  # Фіксуємо поточний час у стандарті UTC
         self.login_time: datetime = now  # Час початку сеансу
-        self.last_activity: datetime = now  # Час останньої активності (на старті співпадає з часом входу)
+        self.last_activity: datetime = (
+            now  # Час останньої активності (на старті співпадає з часом входу)
+        )
 
     def touch(self) -> None:
         # Метод для оновлення часу останньої активності (щоб не викидало з системи)
@@ -150,7 +170,9 @@ class AuditRecord:
 
 class AuditLog:
     def __init__(self):
-        self.logs: list[AuditRecord] = []  # Створюємо порожній список для зберігання всіх подій
+        self.logs: list[
+            AuditRecord
+        ] = []  # Створюємо порожній список для зберігання всіх подій
 
     def add_log(self, username: str, action: str) -> None:
         # Створюємо новий запис і додаємо його до журналу (паролі сюди передавати категорично заборонено!)
@@ -171,8 +193,12 @@ class UserAccount:
     # Клас-обгортка, який об'єднує користувача, його поточну сесію та журнал аудиту
     def __init__(self, user: User, audit_log: AuditLog | None = None):
         self.user = user  # Прикріплюємо об'єкт користувача
-        self.session: Session | None = None  # Сесія спочатку відсутня (користувач не залогінений)
-        self.audit_log = audit_log if audit_log is not None else AuditLog()  # Підключаємо журнал аудиту
+        self.session: Session | None = (
+            None  # Сесія спочатку відсутня (користувач не залогінений)
+        )
+        self.audit_log = (
+            audit_log if audit_log is not None else AuditLog()
+        )  # Підключаємо журнал аудиту
 
     def login(self, username: str, password: str, ip: str) -> bool:
         # Процедура авторизації
@@ -185,7 +211,9 @@ class UserAccount:
             # Якщо пароль правильний, створюємо нову сесію з переданим IP
             self.session = Session(ip)
             self.session.touch()  # Оновлюємо час активності
-            self.audit_log.add_log(self.user.username, "login_success")  # Фіксуємо успішний вхід
+            self.audit_log.add_log(
+                self.user.username, "login_success"
+            )  # Фіксуємо успішний вхід
             return True
         else:
             # Якщо пароль неправильний - фіксуємо невдалу спробу
@@ -203,7 +231,9 @@ class UserAccount:
         # Процедура виходу із системи
         if self.session is not None:
             self.session = None  # Знищуємо сесію
-            self.audit_log.add_log(self.user.username, "logout")  # Записуємо подію виходу в журнал
+            self.audit_log.add_log(
+                self.user.username, "logout"
+            )  # Записуємо подію виходу в журнал
 
     def __getitem__(self, item: str):
         # Магічний метод, що дозволяє отримувати атрибути як у словника: account["user"]

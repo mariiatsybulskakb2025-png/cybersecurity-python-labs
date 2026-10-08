@@ -1,0 +1,3 @@
+[INFO] Parsing ARP table snapshot from labs\lab02\data\arp_table.csv...
+[INFO] Validated 11 IP/MAC entries.
+[INFO] Critical conflict logged to labs\lab02\data\arp_security_alerts.json

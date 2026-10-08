@@ -1,4 +1,3 @@
-
 import os
 import random
 import sys
@@ -22,15 +21,15 @@ PASSWORDS = [
     "вилириуцоР",
     "Gr33n@Team",
     "normal123",
-    "лилгРГЛРПГОр83Є"
+    "лилгРГЛРПГОр83Є",
 ]
 
 # Критерії надійності для Варіанта 11 (мінімальна довжина та необхідні типи символів)
 CRITERIA = {
-    "min_length": 7,            # Пароль має бути не коротшим за 7 символів
-    "require_digits": True,     # Має містити хоча б одну цифру
-    "require_upper": True,      # Має містити хоча б одну велику літеру
-    "require_special": True,    # Має містити хоча б один спецсимвол
+    "min_length": 7,  # Пароль має бути не коротшим за 7 символів
+    "require_digits": True,  # Має містити хоча б одну цифру
+    "require_upper": True,  # Має містити хоча б одну велику літеру
+    "require_special": True,  # Має містити хоча б один спецсимвол
 }
 
 # Множина слабких паролів, використання яких заборонено (для швидкого пошуку)
@@ -48,10 +47,12 @@ def check_criteria(password: str) -> dict[str, bool]:
     """Перевіряє наявність окремих груп символів у паролі."""
     # Повертає словник, де ключі - типи символів, а значення - True, якщо символ знайдено
     return {
-        "digits": any(c.isdigit() for c in password),      # Перевірка на наявність цифр
-        "upper": any(c.isupper() for c in password),       # Перевірка на великі літери
-        "lower": any(c.islower() for c in password),       # Перевірка на малі літери
-        "special": any(not c.isalnum() for c in password), # Перевірка на спецсимволи (не букви і не цифри)
+        "digits": any(c.isdigit() for c in password),  # Перевірка на наявність цифр
+        "upper": any(c.isupper() for c in password),  # Перевірка на великі літери
+        "lower": any(c.islower() for c in password),  # Перевірка на малі літери
+        "special": any(
+            not c.isalnum() for c in password
+        ),  # Перевірка на спецсимволи (не букви і не цифри)
     }
 
 
@@ -71,11 +72,11 @@ def evaluate_password(password: str, password_list: list[str]) -> str:
     if all_required:
         # Пароль є унікальним, якщо він зустрічається у списку лише 1 раз
         is_unique = password_list.count(password) == 1
-        
+
         # Дуже сильний: Всі критерії виконані + довжина >= (min_length + 4) + він унікальний
         if len(password) >= min_len + 4 and is_unique:
             return "Дуже сильний"
-        
+
         # Сильний: Відповідає всім критеріям безпеки, але не дотягує до умов "Дуже сильного"
         return "Сильний"
 
@@ -102,10 +103,10 @@ def run_task1() -> None:
 
     # Дублювання 3 випадкових паролів згідно з умовою (імітація повторного використання)
     working_passwords = PASSWORDS.copy()
-    
+
     # Використовуємо модуль random, щоб отримати 3 унікальні індекси зі списку паролів
     random_indices = random.sample(range(len(PASSWORDS)), 3)
-    
+
     # За отриманими індексами беремо паролі та додаємо їх у кінець списку (робимо дублікати)
     for idx in random_indices:
         working_passwords.append(PASSWORDS[idx])
@@ -113,7 +114,7 @@ def run_task1() -> None:
     # Табличний вивід результатів на екран з форматуванням стовпців
     print(f"\n{'Пароль':<20} | {'Оцінка надійності':<15}")
     print("-" * 38)
-    
+
     # Проходимо по кожному паролю з оновленого списку і виводимо його оцінку
     for pwd in working_passwords:
         strength = evaluate_password(pwd, working_passwords)

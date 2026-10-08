@@ -2,9 +2,7 @@ import os
 import sys
 
 # Додаємо шлях до кореня проєкту для імпорту shared
-sys.path.append(
-    os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
-)
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
 # Прямий імпорт без try...except
 from shared.student import GROUP_NAME, STUDENT_NAME, VARIANT_NUMBER
@@ -87,7 +85,9 @@ def check_access(username: str, required_clearance: int) -> tuple[bool, str]:
 
 def run_task2() -> None:
     # Заголовок із використанням імпортованих даних
-    print(f"=== Завдання 2 | Студент: {STUDENT_NAME} ({GROUP_NAME}), Варіант {VARIANT_NUMBER} ===")
+    print(
+        f"=== Завдання 2 | Студент: {STUDENT_NAME} ({GROUP_NAME}), Варіант {VARIANT_NUMBER} ==="
+    )
 
     # Виведення списку ресурсів системи
     print("\n--- Список ресурсів системи ---")
@@ -99,7 +99,7 @@ def run_task2() -> None:
     print("\n--- Результати перевірки доступу ---")
     test_users = list(users.keys()) + ["guest_user"]
 
-    for username in test_users:#Це зовнішній цикл. Він бере першого користувача зі списку (наприклад, "risk_manager") і передає його далі.
+    for username in test_users:  # Це зовнішній цикл. Він бере першого користувача зі списку (наприклад, "risk_manager") і передає його далі.
         for res_name, req_clearance in resources:
             is_allowed, reason = check_access(username, req_clearance)
 
