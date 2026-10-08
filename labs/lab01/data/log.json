@@ -1,0 +1,92 @@
+[
+    {
+        "event": "login",
+        "user": "audit_expert",
+        "result": "success",
+        "timestamp": "2026-09-25 12:30:21"
+    },
+    {
+        "event": "login",
+        "user": "threat_hunter",
+        "result": "success",
+        "timestamp": "2026-09-25 12:30:21"
+    },
+    {
+        "event": "login",
+        "user": "compliance_officer",
+        "result": "success",
+        "timestamp": "2026-09-25 12:30:21"
+    },
+    {
+        "event": "login",
+        "user": "sys_engineer",
+        "result": "success",
+        "timestamp": "2026-09-25 12:30:21"
+    },
+    {
+        "event": "login",
+        "user": "guest_user",
+        "result": "failure",
+        "timestamp": "2026-09-25 12:30:21"
+    },
+    {
+        "event": "login",
+        "user": "risk_manager",
+        "result": "success",
+        "timestamp": "2026-09-25 12:34:26"
+    },
+    {
+        "event": "login",
+        "user": "business_analyst",
+        "result": "failure",
+        "timestamp": "2026-09-25 12:34:26"
+    },
+    {
+        "event": "login",
+        "user": "legal_counsel",
+        "result": "success",
+        "timestamp": "2026-09-25 12:34:26"
+    },
+    {
+        "event": "login",
+        "user": "contractor_dev",
+        "result": "success",
+        "timestamp": "2026-09-25 12:34:26"
+    },
+    {
+        "event": "login",
+        "user": "sec_admin",
+        "result": "failure",
+        "timestamp": "2026-09-25 12:34:26"
+    },
+    {
+        "event": "login",
+        "user": "audit_expert",
+        "result": "success",
+        "timestamp": "2026-09-25 12:34:26"
+    },
+    {
+        "event": "login",
+        "user": "threat_hunter",
+        "result": "success",
+        "timestamp": "2026-09-25 12:34:26"
+    },
+    {
+        "event": "login",
+        "user": "compliance_officer",
+        "result": "success",
+        "timestamp": "2026-09-25 12:34:26"
+    },
+    {
+        "event": "login",
+        "user": "sys_engineer",
+        "result": "success",
+        "timestamp": "2026-09-25 12:34:26"
+    },
+    {
+        "event": "login",
+        "user": "guest_user",
+        "result": "failure",
+        "timestamp": "2026-09-25 12:34:26"
+    }
+]
