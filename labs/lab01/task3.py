@@ -3,7 +3,7 @@ import hashlib  # Бібліотека для криптографії та бе
 import json
 import os
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from functools import wraps
 
 # Додаємо шлях до кореня проєкту, щоб мати можливість імпортувати спільний модуль shared
@@ -85,7 +85,7 @@ def log_event(func):
                 "event": "login",
                 "user": username,
                 "result": result_status,
-                "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),
+                "timestamp": datetime.now(UTC).strftime("%Y-%m-%d %H:%M:%S"),
             }
 
             logs = []

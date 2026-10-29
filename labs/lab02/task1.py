@@ -6,9 +6,9 @@ from dataclasses import (
     dataclass,  # Імпортуємо інструмент для швидкого створення класів, що зберігають дані
 )
 from datetime import (  # Імпортуємо класи для роботи з датою, часом та часовими інтервалами
+    UTC,
     datetime,
     timedelta,
-    timezone,
 )
 
 # Константи за вимогами методички
@@ -28,7 +28,12 @@ class User:
     )
 
     def __init__(
-        self, username: str, email: str, role: str = "user", active: bool = True
+        self,
+        username: str,
+        email: str,
+        role: str = "user",
+        active: bool = True,
+        audit: "AuditLog | None" = None,
     ):
         self.username = username  # Зберігаємо ім'я користувача
         self.role = role  # Зберігаємо роль (за замовчуванням "user")
@@ -39,6 +44,7 @@ class User:
         self.__password_salt: bytes | None = (
             None  # Приватна змінна для збереження "солі" пароля
         )
+        self.audit = audit or AuditLog()
         self.email = email  # Встановлюємо email (це автоматично викличе перевірку в @email.setter)
 
     @property
@@ -140,7 +146,7 @@ class Admin(User):  # Успадковуємо всі властивості т�
 class Session:
     def __init__(self, ip: str):
         self.ip = ip  # Зберігаємо IP-адресу, з якої зайшов користувач
-        now = datetime.now(timezone.utc)  # Фіксуємо поточний час у стандарті UTC
+        now = datetime.now(UTC)  # Фіксуємо поточний час у стандарті UTC
         self.login_time: datetime = now  # Час початку сеансу
         self.last_activity: datetime = (
             now  # Час останньої активності (на старті співпадає з часом входу)
@@ -148,13 +154,13 @@ class Session:
 
     def touch(self) -> None:
         # Метод для оновлення часу останньої активності (щоб не викидало з системи)
-        self.last_activity = datetime.now(timezone.utc)
+        self.last_activity = datetime.now(UTC)
 
     def is_active(self, timeout_sec: int) -> bool:
         # Перевіряємо, чи не закінчився час сеансу (таймаут)
         if timeout_sec <= 0:
             raise ValueError("Таймаут повинен бути додатним числом секунди.")
-        now = datetime.now(timezone.utc)  # Беремо поточний час
+        now = datetime.now(UTC)  # Беремо поточний час
         # Якщо з моменту останньої дії пройшло менше часу, ніж дозволено (15 хвилин) - сеанс активний
         return (now - self.last_activity) < timedelta(seconds=timeout_sec)
 
@@ -177,7 +183,7 @@ class AuditLog:
     def add_log(self, username: str, action: str) -> None:
         # Створюємо новий запис і додаємо його до журналу (паролі сюди передавати категорично заборонено!)
         record = AuditRecord(
-            timestamp=datetime.now(timezone.utc),
+            timestamp=datetime.now(UTC),
             username=username,
             action=action,
         )
@@ -262,3 +268,15 @@ class UserAccount:
             self.audit_log = value
         else:
             raise KeyError(f"Зміна атрибута за ключем '{item}' заборонена.")
+
+    def has_role(self, role: str) -> bool:
+        """
+        Перевіряє, чи має користувач роль (наприклад 'admin').
+        Підтримує як атрибут user.role, так і множину user.roles (якщо є).
+        """
+        # Якщо у User є атрибут roles (set), перевіряємо його
+        roles = getattr(self.user, "roles", None)
+        if isinstance(roles, (set, list, tuple)) and role in roles:
+            return True
+        # Інакше перевіряємо простий атрибут role
+        return getattr(self.user, "role", "") == role

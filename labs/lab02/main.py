@@ -12,6 +12,17 @@ def run_demo():
     account = UserAccount(user)
     print(f"Створено користувача: {account['user']}")
 
+    # 1,1створення  адміністратора
+    print("\n=== СТВОРЕННЯ АДМІНІСТРАТОРА ===")
+    admin = Admin(username="admin", email="admin@domain.com")
+    admin.set_password("AdminStrong!2026")
+    UserAccount(admin)
+    print(f"Створено адміністратора: username={admin.username}, email={admin.email}")
+    admin2 = Admin(username="admin2", email="admin2@domain.com")
+    admin2.set_password("Admin123445")
+    UserAccount(admin2)
+    print(f"Створено адміністратора: username={admin2.username}, email={admin2.email}")
+
     # 2. Невдала спроба входу
     print("\n--- Спроба входу з невірним паролем ---")
     login_fail = account.login("mariya", "WrongPassword", "192.168.1.10")
@@ -26,20 +37,20 @@ def run_demo():
     # 4. Валідація та зміна email
     print("\n--- Перевірка валідації Email ---")
     try:
-        user.email = "bad_email"
+        user.email = "mariya_cyb@domain.com"  # Встановлюємо валідний email
     except ValueError as e:
-        print(f"Спіймано очікувану помилку: {e}")
-
-    user.email = "new_mariya@domain.org"
-    print(f"Оновлено email: {user.email}")
+        print(f"Валідна електронна пошта: {e}")
 
     # 5. Перевірка прав адміністратора (Admin)
     print("\n--- Перевірка класу Admin ---")
-    admin = Admin(username="admin_user", email="admin_sec@domain.com")
+    admin = Admin(username="admin", email="admin@domain.com")
     admin.grant_permission("READ_LOGS")
     admin.grant_permission("DELETE_USER")
     print(f"Інформація про адміна: {admin}")
     print(f"Має право READ_LOGS: {admin.has_permission('READ_LOGS')}")
+    admin2.grant_permission("MANAGE_USERS")
+    print(f"Інформація про адміна: {admin2}")
+    print(f"Має право MANAGE_USERS: {admin2.has_permission('MANAGE_USERS')}")
 
     # 6. Завершення сеансу (Logout)
     print("\n--- Вихід із системи (Logout) ---")
